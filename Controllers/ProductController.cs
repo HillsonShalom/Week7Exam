@@ -11,9 +11,11 @@ namespace Week7Exam.Controllers
         {
             _httpClient = new HttpClient();
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            string json = await _httpClient.GetStringAsync("https://fakestoreapi.com/products");
+            string url = id == null ? "https://fakestoreapi.com/products" : $"https://fakestoreapi.com/products/{id}";
+            string json = await _httpClient.GetStringAsync(url);
+            if (id != null) json = "[" + json + "]";
             List<Product> list = JsonConvert.DeserializeObject<List<Product>>(json);
             return View(list);
         }
