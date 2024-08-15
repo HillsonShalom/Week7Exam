@@ -40,5 +40,28 @@ namespace Week7Exam.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            Product product = JsonConvert.DeserializeObject<Product>(await _httpClient
+                .GetStringAsync($"https://fakestoreapi.com/products/{id}"))!;
+            return View(product);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Product product)
+        {
+            try
+            {
+                HttpContent content = new StringContent(JsonConvert.SerializeObject(product));
+                var res = await _httpClient.PutAsync($"https://fakestoreapi.com/products/{product.Id}", content);
+                Console.WriteLine(res.StatusCode);
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+            return RedirectToAction("Index");
+        }
     }
 }
